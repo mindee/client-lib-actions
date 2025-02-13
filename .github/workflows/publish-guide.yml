@@ -1,0 +1,26 @@
+name: Publish Guide to readme.com
+
+on:
+  workflow_dispatch:
+    inputs:
+      docs_dir:
+        required: true
+        type: string
+        default: './docs'
+      version:
+        required: true
+        type: string
+        default: '1.0'
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout this repo
+        uses: actions/checkout@v4
+
+      # Run GitHub Action to sync documentation
+      - name: GitHub Action
+        uses: readmeio/rdme@v8
+        with:
+          rdme: docs ${{ inputs.docs_dir }} --key=${{ secrets.README_API_KEY }} --version=${{ inputs.version }}
