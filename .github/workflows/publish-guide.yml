@@ -4,11 +4,9 @@ on:
   workflow_call:
     inputs:
       docs_dir:
-        required: true
         type: string
         default: './docs'
       version:
-        required: true
         type: string
         default: '1.0'
 
