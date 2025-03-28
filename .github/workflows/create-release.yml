@@ -1,0 +1,57 @@
+name: Create Release
+
+on:
+  workflow_call:
+
+jobs:
+  create-release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: '0'
+
+      - name: Install Dependencies
+        run: sudo apt-get install pcregrep
+
+      - name: Create Release
+        run: |
+          repo=$(basename -s .git $(git remote get-url origin))
+  
+          version_format='^v[0-9]{1,}\.[0-9]{1,}\.[0-9]{1,}$'
+          tag=$(git describe | grep -oP "${version_format}")
+          
+          if [ -z "${tag}" ]; then
+            echo 'Version not found, aborting.';
+            exit 1
+          fi
+          echo "Found current tag: ${tag}";
+          
+          last_tag=$(git tag --sort=-v:refname | head -n 2 | tail -1);
+          echo "Found last tag: ${last_tag}";
+          
+          log_pattern="(?<=## $tag - ....-..-..)(.|\n)*(?=\n\n## $last_tag)";
+          
+          body=$(pcregrep -M -o "$log_pattern" ./CHANGELOG.md);
+          
+          if [ -z "${body}" ]; then
+            echo 'Body not found, aborting.';
+            exit 1
+          fi
+          echo 'Found release body.';
+          
+          body="${body//$'\n'/\\n}"
+          body="${body}\n\n**Full Changelog**: https://github.com/mindee/${repo}/compare/${last_tag}...${tag}"
+          
+          static='"draft":false, "generate_release_notes":false'
+          data=$(printf '{"tag_name":"%s", "name":"%s", "body":"%s", %s}' $tag $tag "$body" "$static")
+          
+          echo 'Posting release ...';
+          curl -L -X POST \
+            --fail-with-body \
+            -H "Accept: application/vnd.github+json" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            -H "Authorization: Bearer ${{ secrets.RELEASE_ACCESS_TOKEN }}" \
+            --data "${data}" \
+            https://api.github.com/repos/mindee/${repo}/releases
