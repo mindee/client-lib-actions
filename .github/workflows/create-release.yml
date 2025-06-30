@@ -19,7 +19,7 @@ jobs:
         run: |
           repo=$(basename -s .git $(git remote get-url origin))
   
-          version_format='^v[0-9]{1,}\.[0-9]{1,}\.[0-9]{1,}$'
+          version_format='^v[0-9]{1,}\.[0-9]{1,}\.[0-9]{1,}(-rc[0-9])?$'
           tag=$(git describe | grep -oP "${version_format}")
           
           if [ -z "${tag}" ]; then
