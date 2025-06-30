@@ -16,7 +16,7 @@ jobs:
     - name: Tag version
       run: |
         msg_start=':bookmark: Version '
-        version_format='[0-9]{1,}\.[0-9]{1,}\.[0-9]{1,}'
+        version_format='[0-9]{1,}\.[0-9]{1,}\.[0-9]{1,}(-rc.[0-9])?'
         version=$(git log -1 --skip=0 --pretty=%s | grep -oP "(?<=${msg_start})${version_format}")
         
         if [ -z "${version}" ]; then
