@@ -19,8 +19,4 @@ jobs:
       - name: Checkout this repo
         uses: actions/checkout@v4
 
-      # Run GitHub Action to sync documentation
-      - name: GitHub Action
-        uses: readmeio/rdme@v8
-        with:
-          rdme: docs ${{ inputs.docs_dir }} --key=${{ secrets.README_API_KEY }} --version=${{ inputs.version }}
+      # TODO: integrate into gitbook
