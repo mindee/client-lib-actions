@@ -1,4 +1,4 @@
-name: Publish Guide to readme.com
+name: Publish Guide
 
 on:
   workflow_call:
@@ -17,6 +17,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout this repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       # TODO: integrate into gitbook
