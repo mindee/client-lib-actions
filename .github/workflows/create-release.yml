@@ -12,9 +12,6 @@ jobs:
         with:
           fetch-depth: '0'
 
-      - name: Install Dependencies
-        run: sudo apt-get install -y pcregrep libpcre3-utils
-
       - name: Create Release
         run: |
           repo=$(basename -s .git $(git remote get-url origin))
@@ -33,7 +30,7 @@ jobs:
           
           log_pattern="(?<=## $tag - ....-..-..)(.|\n)*(?=\n\n## $last_tag)";
           
-          body=$(pcregrep -M -o "$log_pattern" ./CHANGELOG.md);
+          body=$(grep -Pzo "$log_pattern" ./CHANGELOG.md | tr -d '\0');
           
           if [ -z "${body}" ]; then
             echo 'Body not found, aborting.';
