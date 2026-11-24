@@ -13,7 +13,7 @@ jobs:
           fetch-depth: '0'
 
       - name: Install Dependencies
-        run: sudo apt-get install pcregrep
+        run: sudo apt-get install -y pcregrep libpcre3-utils
 
       - name: Create Release
         run: |
